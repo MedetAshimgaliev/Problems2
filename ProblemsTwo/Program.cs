@@ -162,11 +162,116 @@ namespace ProblemsTwo
             return isPalindrome;
         }
 
+        public ListNode mergeTwoLists(ListNode l1, ListNode l2)
+        {
+            ListNode head = new ListNode(0);
+            ListNode res = head;
+
+            while(l1!=null && l2 != null)
+            {
+                if (l1.val > l2.val)
+                {
+                    res.next = l2;
+                    l2 = l2.next;
+                }
+                else
+                {
+                    res.next = l1;
+                    l1 = l1.next;
+                }
+
+                res = res.next;
+            }
+
+            if (l1 != null)
+            {
+                res.next = l1;
+                l1 = l1.next;
+            }
+
+            if(l2 != null)
+            {
+                res.next = l2;
+                l2 = l2.next;
+            }
+
+            return head.next;
+        }
+
+        public static List<long> Djai(List<int> l1)
+        {
+            List<long> res = new List<long>();
+
+            l1.Reverse();
+
+            long num = Int64.Parse(String.Join("", l1));
+
+            while (num != 0)
+            {
+                res.Add(num % 10);
+                num = num / 10;
+            }
+
+
+            return res;
+
+        }
+
+        public ListNode AddTwoNumbers(ListNode l1, ListNode l2)
+        {
+            List<int> list1 = new List<int>();
+            List<int> list2 = new List<int>();
+            while (l1 != null)
+            {
+                list1.Add(l1.val);
+                l1 = l1.next;
+            }
+            while (l2 != null)
+            {
+                list2.Add(l2.val);
+                l2 = l2.next;
+            }
+
+            list1.Reverse();
+            list2.Reverse();
+            long sum = Int64.Parse(String.Join("", list1)) + Int64.Parse(String.Join("", list2));
+            if (sum == 0)
+            {
+                return new ListNode(0);
+            }
+
+            ListNode head = new ListNode(0);
+            ListNode res = head;
+
+            while (sum != 0)
+            {
+                res.next = new ListNode((int)sum % 10);
+                sum = sum / 10;
+                res = res.next;
+            }
+
+            
+
+            return head.next;
+        }
+
+        public static int[] PlusOne(int[] digits)
+        {
+
+            return null;
+        }
+
         static void Main(string[] args)
         {
             //2->1->3->5->6->4->7->NULL
             //2->3->6->7->1->5->4->NULL
 
+            //List<int> l1 = new List<int> { 1, 9, 9, 9, 9, 9, 9, 9, 9, 9 };
+
+            //foreach (int c in Djai(l1))
+            //{
+            //    Console.WriteLine(c);
+            //}
 
             //Console.WriteLine("Hello World!");
         }
