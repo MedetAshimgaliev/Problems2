@@ -217,7 +217,7 @@ namespace ProblemsTwo
 
         }
 
-        public ListNode AddTwoNumbers(ListNode l1, ListNode l2)
+        public ListNode AddTwoNumbersExtra(ListNode l1, ListNode l2)
         {
             List<int> list1 = new List<int>();
             List<int> list2 = new List<int>();
@@ -255,11 +255,47 @@ namespace ProblemsTwo
             return head.next;
         }
 
-        public static int[] PlusOne(int[] digits)
+        public ListNode AddTwoNumbers(ListNode l1, ListNode l2)
         {
+            ListNode head = new ListNode(0);
+            ListNode res = head;
 
-            return null;
+            int carry = 0;
+
+            while(l1!=null || l2 != null)
+            {
+                int l1_val = (l1.val != null) ? l1.val : 0;
+                int l2_val = (l2.val != null) ? l2.val : 0;
+
+
+                int current_sum = l1_val + l2_val + carry;
+                int last_digit = current_sum / 10;
+                carry = current_sum / 10;
+                ListNode new_node = new ListNode(last_digit);
+                res.next = new_node;
+
+                if (l1 != null)
+                {
+                    l1 = l1.next;
+                }
+                if(l2 != null)
+                {
+                    l2 = l2.next;
+                }
+                res = res.next;
+            }
+
+            if (carry > 0)
+            {
+                ListNode new_node = new ListNode(carry);
+                res.next = new_node;
+                res = res.next;
+            }
+
+            return head.next;
         }
+
+        
 
         static void Main(string[] args)
         {
@@ -274,6 +310,15 @@ namespace ProblemsTwo
             //}
 
             //Console.WriteLine("Hello World!");
+
+
+
+            //int[] arr = new int[] {7};
+
+            //foreach(int c in PlusOne(arr))
+            //{
+            //    Console.WriteLine(c);
+            //}
         }
     }
 }
