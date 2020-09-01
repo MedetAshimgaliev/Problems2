@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ProblemsTwo
@@ -786,31 +787,74 @@ namespace ProblemsTwo
 
         public static int StrStr(string haystack, string needle)
         {
-            return 0;
+            if (needle == "" || needle == "") return -1;
+            var arrOrigin = haystack.ToCharArray();
+
+            var target = needle.ToCharArray()[0];
+
+            return Array.IndexOf(arrOrigin, target);
+        }
+
+        public static string LargestTimeFromDigits(int[] A)
+        {
+            StringBuilder st = new StringBuilder();
+            HashSet<int> used = new HashSet<int>();
+            int maxTime = -1;
+            string result = string.Empty;
+
+            BuildString(st, used, A, 0, 0, ref maxTime, ref result);
+            return result;
+        }
+
+        private static void BuildString(StringBuilder st, HashSet<int> used, int[] A, int hours, int minutes, ref int maxTime, ref string result)
+        {
+            if (used.Count == A.Length)
+            {
+                if (st.Length == 4 && hours * 60 + minutes > maxTime)
+                {
+                    maxTime = hours * 60 + minutes;
+                    st.Insert(2, ":");
+                    result = st.ToString();
+                    st.Remove(2, 1);
+                }
+                return;
+            }
+
+            for (int i = 0; i < A.Length; i++)
+            {
+                if (used.Contains(i)) { continue; }
+
+                if (st.Length < 2 && hours * 10 + A[i] < 24)
+                {
+                    st.Append(A[i]);
+                    used.Add(i);
+                    BuildString(st, used, A, hours * 10 + A[i], minutes, ref maxTime, ref result);
+                    used.Remove(i);
+                    st.Length--;
+                }
+                else if (st.Length >= 2 && minutes * 10 + A[i] < 60)
+                {
+                    st.Append(A[i]);
+                    used.Add(i);
+                    BuildString(st, used, A, hours, minutes * 10 + A[i], ref maxTime, ref result);
+                    used.Remove(i);
+                    st.Length--;
+                }
+            }
         }
 
         static void Main(string[] args)
         {
-            int[] arr = new int[] { 1, 3, 5, 4, 2, 3, 4, 5 };
+            int[] arr = new int[] { 1,2,3,4};
 
-            int[][] jaggedArray = new int[][]
-            {
-                new int[] { 2, 3, 1, 2, 3, 2, 3, 3 },
-                new int[] { 0, 3 },
-                new int[] { 4,6 },
-                new int[] { 6,7 },
-                new int[] { 3,5 },
-                new int[] { 0,7 }
-            };
+            //foreach(var row in Generate(5))
+            //{
+            //    Console.WriteLine(String.Join(' ', row));
+            //}
 
-            var output = serviceLane(8,jaggedArray);
-
-            foreach(var row in Generate(5))
-            {
-                Console.WriteLine(String.Join(' ', row));
-            }
-
-            
+            //Console.WriteLine(StrStr("hello", "ll"));
+            //23:41
+            Console.WriteLine(LargestTimeFromDigits(arr));
         }
     }
 }
