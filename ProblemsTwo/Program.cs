@@ -785,16 +785,6 @@ namespace ProblemsTwo
             return triangle;
         }
 
-        public static int StrStr(string haystack, string needle)
-        {
-            if (needle == "" || needle == "") return -1;
-            var arrOrigin = haystack.ToCharArray();
-
-            var target = needle.ToCharArray()[0];
-
-            return Array.IndexOf(arrOrigin, target);
-        }
-
         public static string LargestTimeFromDigits(int[] A)
         {
             StringBuilder st = new StringBuilder();
@@ -843,9 +833,52 @@ namespace ProblemsTwo
             }
         }
 
+        public static int StrStr(string haystack, string needle)
+        {
+            if (needle == "" || needle == "") return 0;
+            var arrOrigin = haystack.ToCharArray();
+
+            var target = needle.ToCharArray()[0];
+
+            return Array.IndexOf(arrOrigin, target);
+        }
+
+        public static string[] FindWords(string[] words)
+        {
+            List<string> keyboard = new List<string>(){
+                 "qwertyuiopQWERTYUIOP",
+                 "asdfghjklASDFGHJKL",
+                 "zxcvbnmZXCVBNM"
+            };
+
+            return words.Where(w => keyboard.Any(k => w.All(k.Contains))).ToArray();
+        }
+
+        public static int FindSpecialInteger(int[] arr)
+        {
+            int res = 0;
+            Dictionary<int, int> ht = new Dictionary<int, int>();
+
+            foreach(int c in arr)
+            {
+                if (ht.ContainsKey(c))
+                {
+                    ht[c] += 1;
+                }
+                else
+                {
+                    ht.Add(c, 1);
+                }
+            }
+            int max = ht.Values.Max();
+            return ht.Where(x=>x.Value == max).Select(x=>x.Key).First();
+        }
+
         static void Main(string[] args)
         {
-            int[] arr = new int[] { 1,2,3,4};
+            int[] arr = new int[] { 1, 2, 2, 6, 6, 6, 6, 7, 10 };
+
+            string[] strarr = new string[] { "Hello", "Alaska", "Dad", "Peace" };
 
             //foreach(var row in Generate(5))
             //{
@@ -854,7 +887,14 @@ namespace ProblemsTwo
 
             //Console.WriteLine(StrStr("hello", "ll"));
             //23:41
-            Console.WriteLine(LargestTimeFromDigits(arr));
+
+            //foreach(string word in FindWords(strarr))
+            //{
+            //    Console.WriteLine(word);
+            //}
+
+            Console.WriteLine(FindSpecialInteger(arr));
+            
         }
     }
 }
