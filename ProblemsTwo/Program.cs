@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+
 
 namespace ProblemsTwo
 {
@@ -874,27 +880,289 @@ namespace ProblemsTwo
             return ht.Where(x=>x.Value == max).Select(x=>x.Key).First();
         }
 
-        static void Main(string[] args)
+        public static IList<int> SpiralOrder(int[][] matrix)
         {
-            int[] arr = new int[] { 1, 2, 2, 6, 6, 6, 6, 7, 10 };
+            IList<int> spiral = new List<int>();
 
-            string[] strarr = new string[] { "Hello", "Alaska", "Dad", "Peace" };
+            for(int i = 0; i < matrix.Length; i++)
+            {
+                for(int j = 0; j < matrix[i].Length; j++)
+                {
+                    spiral.Add(matrix[i][j]);
+                }
+            }
 
-            //foreach(var row in Generate(5))
-            //{
-            //    Console.WriteLine(String.Join(' ', row));
-            //}
+            return spiral;
+        }
 
-            //Console.WriteLine(StrStr("hello", "ll"));
-            //23:41
+        public static bool IsToeplitzMatrix(int[][] matrix)
+        {
+            List<bool> list = new List<bool>();
 
-            //foreach(string word in FindWords(strarr))
-            //{
-            //    Console.WriteLine(word);
-            //}
+            for(int i = 1; i < matrix.Length; i++)
+            {
+                for(int j = 1; j < matrix[i].Length; j++)
+                {
+                    if(matrix[i][j] == matrix[i - 1][j - 1])
+                    {
+                        list.Add(true);
+                    }
+                    else
+                    {
+                        list.Add(false);
+                    }
+                }
+            }
+            
+            return list.All(x=>x == true);
+        }
 
-            Console.WriteLine(FindSpecialInteger(arr));
+        public static List<string> getUsernames(int threshold)
+        {
+            List<string> result = new List<string>();
+            HttpClient Http = new HttpClient();
+            var jsonString = Http.GetStringAsync("https://jsonmock.hackerrank.com/api/article_users?page=1").Result;
+            var jsonString2 = Http.GetStringAsync("https://jsonmock.hackerrank.com/api/article_users?page=2").Result;
+            var response = JsonConvert.DeserializeObject<OtvetJson>(jsonString);
+            var response2 = JsonConvert.DeserializeObject<OtvetJson>(jsonString2);
+
+            foreach(var data in response2.data)
+            {
+                response.data.Add(data);
+            }
+
+            foreach (var Item in response.data)
+            {
+                var usernames = response.data
+                    .Where(x => x.submission_count > threshold)
+                    .Select(x => x.username)
+                    .ToList();
+
+                result = usernames;
+            }
+
+            return result;
+        }
+
+        public static bool CanJump(int[] nums)
+        {
+            if (nums.Length == 0 || nums == null) return false;
+
+            int lastGoodIndexPosition = nums.Length - 1;
+
+            for(int i = nums.Length - 1; i >= 0; i--)
+            {
+                if(i+nums[i] >= lastGoodIndexPosition)
+                {
+                    lastGoodIndexPosition = i;
+                }
+            }
+
+            return lastGoodIndexPosition == 0;
+        }
+
+        public static bool IncreasingTriplet(int[] nums)
+        {
+            if (nums.Length < 3) return false;
+
+            bool result = false;
+            int min = int.MaxValue;
+            int mid = int.MaxValue;
+
+            for(int i = 0; i < nums.Length; i++)
+            {
+                if(nums[i] <= min)
+                {
+                    min = nums[i];
+                }
+                else if(nums[i] <= mid)
+                {
+                    mid = nums[i];
+                }
+                else
+                {
+                    result = true;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+
+        public static int[] PrefizSum(int[] a)
+        {
+            int[] PrefixSum = new int[a.Length];
+
+            for(int i = 0; i < a.Length; i++)
+            {
+                PrefixSum[i] = a[i];
+                if (i > 0)
+                {
+                    PrefixSum[i] += PrefixSum[i - 1];
+                }
+            }
+
+            return PrefixSum;
+        }
+
+
+        public static int DiagonalSum(int[][] mat)
+        {
+            List<int> elements = new List<int>();
+
+            int first = 0;
+            int last = mat[0].Length-1;
+
+            for (int i = 0; i < mat.Length; i++)
+            {
+                if(first == last)
+                {
+                    elements.Add(mat[first][last]);
+                    first++; last--;
+                }
+                else
+                {
+                    elements.Add(mat[i][first]);
+                    elements.Add(mat[i][last]);
+                    first++; last--;
+                }
+
+            }
+
+
+            return elements.Sum();
+        }
+
+        public static int[] SortByBits(int[] arr)
+        {
+            Array.Sort(arr, (n1, n2) =>
+            {
+                var onesCount1 = countOnes(n1);
+                var onesCount2 = countOnes(n2);
+                var onesCmp = onesCount1.CompareTo(onesCount2);
+                if (onesCmp != 0)
+                {
+                    return onesCmp;
+                }
+
+                return n1.CompareTo(n2);
+            });
+
+            return arr;
+        }
+
+        private static int countOnes(int n)
+        {
+            int res = 0;
+
+            for (int i=0;i<32;i++)
+            {
+                if((n & (1 << i)) != 0)
+                {
+                    res++;
+                }
+            }
+
+            return res;
+        }
+
+        public static int[] TwoSum(int[] nums, int target)
+        {
+            if(nums == null || nums.Length < 2)
+            {
+                return null;
+            }
+
+            Dictionary<int, int> ht = new Dictionary<int, int>();
+
+            for(int i = 0; i < nums.Length; i++)
+            {
+                int need = target - nums[i];
+                if (ht.ContainsKey(need))
+                {
+                    int[] result = { i, ht[need] };
+                    return result;
+                }
+                ht.Add(nums[i], i); 
+            }
+
+            return null;
+        }
+
+
+        //Learn dynamic programming concepts!!!
+        public static int ClimbStairs(int n)
+        {
+            if (n == 1) return 1;
+            if (n == 2) return 2;
+
+            var arr = new int[n + 1];
+
+            arr[1] = 1;
+            arr[2] = 2;
+
+            for(int i = 3; i < n+1; i++)
+            {
+                arr[n] = arr[n - 1] + arr[n - 2];
+            }
+
+            return arr[n];
             
         }
+
+        static void Main(string[] args)
+        {
+
+            int[] arr = new int[] { 2, 7, 11, 15 };
+
+            int[][] matrix = new int[][]
+            {
+                new int[] { 1, 2, 3 },
+                new int[] { 4, 5, 6 },
+                new int[] { 7, 8, 9 }
+            };
+
+
+            //Console.WriteLine(ClimbStairs(4));
+
+            foreach(int c in TwoSum(arr, 9))
+            {
+                Console.WriteLine(c);
+            }
+
+        }
+    }
+
+    public class data
+    {
+        public int number { get; set; }
+        public int ones { get; set; }
+    }
+
+    public class OtvetJson
+    {
+        public int page { get; set; }
+        public int per_page { get; set; }
+        public int total { get; set; }
+        public int total_pages { get; set; }
+        public List<UserRecord> data { get; set; }
+    }
+
+    public class UserRecord
+    {
+        public int Id { get; set; }
+
+        public string username { get; set; }
+
+        public string about { get; set; }
+
+        public int submitted { get; set; }
+
+        public string updated_at { get; set; }
+
+        public int submission_count { get; set; }
+
+        public int comment_count { get; set; }
     }
 }
